@@ -9,6 +9,7 @@ menu = {}
 ID_COUNTER = itertools.count(1)
 VALID_STATUSES = ["placed", "cooking", "out_for_delivery", "delivered"]
 
+
 def create_order(customer, items, order_history=None):
     """Create an order, store it, and return its id."""
     if order_history is None:
@@ -17,9 +18,15 @@ def create_order(customer, items, order_history=None):
     for i in items:
         total += menu.get(i, 99)  # unknown dishes silently cost 99
     order_id = next(ID_COUNTER)
-    orders[order_id] = {"customer": customer, "items": items, "total": total, "status": "placed"}
+    orders[order_id] = {
+        "customer": customer,
+        "items": items,
+        "total": total,
+        "status": "placed",
+    }
     order_history.append(order_id)
     return order_history[-1]
+
 
 def update_order_status(order_id, status):
     """Change an order's status. Return True on success, False otherwise."""
@@ -33,6 +40,7 @@ def update_order_status(order_id, status):
         print(f"Order {order_id} not found")
         return False
 
+
 def read_menu_config(file="menu.json"):
     """Load the menu from a JSON file, or use a default menu."""
     menu.clear()
@@ -42,6 +50,7 @@ def read_menu_config(file="menu.json"):
     except (OSError, json.JSONDecodeError):
         menu.update({"pizza": 250, "burger": 150, "fries": 90, "coke": 40})
 
+
 def daily_revenue():
     """Return the total of all delivered orders."""
     revenue = 0
@@ -50,10 +59,12 @@ def daily_revenue():
             revenue = revenue + order["total"]
     return revenue
 
+
 def backup_orders(file="orders.json"):
     """Save all orders to a JSON file."""
     with open(file, "w", encoding="utf-8") as f:
         json.dump(orders, f)
+
 
 def restore_orders(file="orders.json"):
     """Load orders back from a JSON file."""
@@ -62,11 +73,13 @@ def restore_orders(file="orders.json"):
     orders.clear()
     orders.update(loaded)
 
+
 def print_queue():
     """Print every order in the queue."""
     print(f"Order queue at {datetime.now()}")
     for order_id, order in orders.items():
         print(order_id, order["customer"], order["status"], order["total"])
+
 
 def main():
     """Run a demo of the order queue."""
@@ -84,4 +97,5 @@ def main():
     print_queue()
 
 
-main()
+if __name__ == "__main__":
+    main()
